@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # app22
 
 A new Flutter project.
@@ -18,3 +19,6 @@ samples, guidance on mobile development, and a full API reference.
 =======
 # Firebase
 >>>>>>> bb1baef66bf4045b54f045034161b10735d6564b
+=======
+
+>>>>>>> de33e6fa6526355c075a8517742e893dc7e3494d
