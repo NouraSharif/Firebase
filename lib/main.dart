@@ -22,7 +22,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    //هاي دالة streem اللي بتستمع على حالة المستخدم
+    //هاي دالة streem اللي بتستمع الى حالة المستخدم
+
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         print(
