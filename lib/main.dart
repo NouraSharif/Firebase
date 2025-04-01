@@ -1,4 +1,5 @@
 import 'package:app22/firebase_options.dart';
+import 'package:app22/homepage.dart';
 import 'package:app22/login.dart';
 import 'package:app22/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    //هاي دالة streem اللي بتسمع على حالة المستخدم
+    //هاي دالة streem اللي بتستمع على حالة المستخدم
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         print(
@@ -39,10 +40,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const login100(),
+      home: const Login(),
       routes: {
-        "register": (context) => const Register20(),
-        "login": (context) => const login100(),
+        "register": (context) => const Register(),
+        "login": (context) => const Login(),
+        "homepage": (context) => Homepage(),
       },
     );
   }

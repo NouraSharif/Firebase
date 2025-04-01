@@ -1,20 +1,27 @@
 // ignore_for_file: file_names
 
+import 'dart:convert' show jsonDecode;
+
 import 'package:app22/custom/custom_button.dart';
 import 'package:app22/custom/custom_logo.dart';
 import 'package:app22/custom/custom_text.dart';
+import 'package:awesome_dialog/awesome_dialog.dart'
+    show AnimType, AwesomeDialog, DialogType;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
 
 // ignore: camel_case_types
-class login100 extends StatefulWidget {
-  const login100({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
   @override
-  State<login100> createState() => _login100();
+  State<Login> createState() => _Login();
 }
 
 // ignore: camel_case_types
-class _login100 extends State<login100> {
+class _Login extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +60,60 @@ class _login100 extends State<login100> {
               ),
             ),
             Container(height: 10),
-            const TestButton(login: "Login"),
+            CustomButtonAuth(
+              login: "Login",
+              onPressed:
+                  () =>
+                      AwesomeDialog(
+                        context: context,
+                        dialogType: DialogType.info,
+                        animType: AnimType.rightSlide,
+                        title: 'Dialog Title',
+                        desc: 'Fetching data from the server...',
+                        btnCancelOnPress: () {},
+                        btnOkOnPress: () async {
+                          try {
+                            final response = await http
+                                .get(
+                                  Uri.parse(
+                                    "https://jsonplaceholder.typicode.com/posts",
+                                  ),
+                                )
+                                .timeout(
+                                  const Duration(seconds: 10),
+                                  onTimeout: () {
+                                    throw Exception("Request timed out");
+                                  },
+                                );
+
+                            if (response.statusCode == 200) {
+                              final responseBody = jsonDecode(response.body);
+
+                              if (responseBody is List &&
+                                  responseBody.isNotEmpty) {
+                                if (kDebugMode) {
+                                  print(
+                                    "First Title: ${responseBody[0]['title']}",
+                                  );
+                                }
+                              } else {
+                                if (kDebugMode) {
+                                  print("No data found.");
+                                }
+                              }
+                            } else {
+                              if (kDebugMode) {
+                                print("Server error: ${response.statusCode}");
+                              }
+                            }
+                          } catch (e) {
+                            if (kDebugMode) {
+                              print("Error occurred: $e");
+                            }
+                          }
+                        },
+                      ).show(),
+            ),
             Container(height: 30),
             const Row(
               children: [
@@ -86,14 +146,12 @@ class _login100 extends State<login100> {
                     icon: const Text(
                       'f', // حرف 'F' لتمثيل فيسبوك
                       style: TextStyle(
-                        fontSize: 26, // حجم الخط
-                        color: Colors.blue, // تعيين اللون الأزرق
-                        fontWeight: FontWeight.bold, // تعيين الخط العريض
+                        fontSize: 26,
+                        color: Colors.blue,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: () {
-                      // هنا تضع الكود الذي يتم تنفيذه عند الضغط على الأيقونة
-                    },
+                    onPressed: () {},
                   ),
                 ),
                 Container(
@@ -105,30 +163,26 @@ class _login100 extends State<login100> {
                   ),
                   margin: const EdgeInsets.all(10),
                   child: IconButton(
-                    onPressed: () {
-                      // هنا تضع الكود الذي يتم تنفيذه عند الضغط على الأيقونة
-                    },
+                    onPressed: () {},
                     icon: ShaderMask(
                       shaderCallback: (bounds) {
                         return const LinearGradient(
                           colors: [
-                            Colors.blue, // الأزرق
-                            Colors.red, // الأحمر
-                            Colors.yellow, // الأصفر
-                            Colors.green, // الأخضر
+                            Colors.blue,
+                            Colors.red,
+                            Colors.yellow,
+                            Colors.green,
                           ],
                         ).createShader(
                           Rect.fromLTRB(0.0, 0.0, bounds.width, bounds.height),
-                        ); // تطبيق التدرج
+                        );
                       },
                       child: const Text(
-                        'G', // حرف 'G' لتمثيل Google
+                        'G',
                         style: TextStyle(
-                          fontSize: 26, // حجم الخط
-                          fontWeight: FontWeight.bold, // جعل الخط عريض
-                          color:
-                              Colors
-                                  .white, // اللون الافتراضي للنص (لن يظهر بسبب التدرج اللوني)
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -161,7 +215,8 @@ class _login100 extends State<login100> {
                   const Text("Do not have an account?"),
                   InkWell(
                     onTap: () {
-                      Navigator.of(context).pushNamed("register");
+                      //لحتى ما تنحفظ صفحة login في الذاكرة
+                      Navigator.of(context).pushReplacementNamed("register");
                     },
                     child: const Text(
                       "Register",

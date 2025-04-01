@@ -5,14 +5,14 @@ import 'package:app22/custom/custom_logo.dart';
 import 'package:app22/custom/custom_text.dart';
 import 'package:flutter/material.dart';
 
-class Register20 extends StatefulWidget {
-  const Register20({super.key});
+class Register extends StatefulWidget {
+  const Register({super.key});
 
   @override
-  State<Register20> createState() => _Register();
+  State<Register> createState() => _Register();
 }
 
-class _Register extends State<Register20> {
+class _Register extends State<Register> {
   bool _isPasswordObscure = true;
   bool _isConfirmPasswordObscure = true;
 
@@ -68,9 +68,14 @@ class _Register extends State<Register20> {
                 Container(height: 20),
                 InkWell(
                   onTap: () {
-                    Navigator.of(context).pushNamed("login");
+                    // Navigator.of(context).pushReplacementNamed("homepage");
                   },
-                  child: const TestButton(login: "Register"),
+                  child: CustomButtonAuth(
+                    login: "Register",
+                    onPressed: () {
+                      Navigator.of(context).pushReplacementNamed("homepage");
+                    },
+                  ),
                 ),
               ],
             ),
