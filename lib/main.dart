@@ -41,7 +41,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const Login(),
+      debugShowCheckedModeBanner: false, // إخفاء شريط الـ Debug
+      //من خلال الفايربيز بنعرف
+      //لو الشخص عامل تسجيل دخول بدي احوله على الصفحة الرئيسية
+      //لو مش عامل تسجيل دخول بدي احوله على صفحة تسجيل الدخول
+      home: FirebaseAuth.instance.currentUser == null ? Login() : Homepage(),
       routes: {
         "register": (context) => const Register(),
         "login": (context) => const Login(),

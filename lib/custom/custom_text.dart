@@ -3,17 +3,21 @@
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
-class testText extends StatelessWidget {
+class CustomText extends StatelessWidget {
   final String label;
   final String hintText;
   final bool isPassword;
   final bool obscureText;
   final VoidCallback? onToggleObscure;
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
 
-  const testText({
+  const CustomText({
     super.key,
     required this.label,
     required this.hintText,
+    required this.controller,
+    required this.validator,
     this.isPassword = false,
     this.obscureText = false,
     this.onToggleObscure,
@@ -29,7 +33,9 @@ class testText extends StatelessWidget {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         const SizedBox(height: 5),
-        TextField(
+        TextFormField(
+          controller: controller, // إضافة الـ controller هنا
+          validator: validator,
           obscureText: isPassword ? obscureText : false,
           decoration: InputDecoration(
             fillColor: const Color.fromARGB(255, 243, 240, 240),

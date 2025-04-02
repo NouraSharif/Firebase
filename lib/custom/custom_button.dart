@@ -5,7 +5,7 @@ class CustomButtonAuth extends StatelessWidget {
   final String login;
   void Function()? onPressed;
 
-  CustomButtonAuth({super.key, required this.login, this.onPressed});
+  CustomButtonAuth({super.key, required this.login, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,3 @@ class CustomButtonAuth extends StatelessWidget {
 
   jsonDecode(String body) {}
 }
-
-/*
- Navigator.of(context).pushReplacementNamed("homepage");
-*/
