@@ -6,6 +6,7 @@ import 'package:app22/custom/custom_text.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 // ignore: camel_case_types
 class Login extends StatefulWidget {
@@ -21,6 +22,36 @@ class _Login extends State<Login> {
   TextEditingController password = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool _isPasswordObscure = true;
+
+  //تسجيل الدخول بواسطة جوجل
+  Future signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    //بلاحظ لو بعمل كانسل لشاشة اختيار الايميل بظهرلي خطا بالاوتبوت
+    //لانه فيه قيمة بترجعلي نل فهاي القيمة بتسبب مشاكل للفانكشن اللي بعدها
+    if (googleUser == null) {
+      // User canceled the sign-in
+      return;
+    } //لحتى يخرج من الدالة
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    //عند الضغط رخ تظهر جميع الاليميلات الخاصة فيا في جوجل
+    //اذا تمت العملية بنجاح رح اخليه ينقلني على الصفحة الرئيسية
+    Navigator.of(
+      context,
+    ).pushNamedAndRemoveUntil("homepage", (Route<dynamic> route) => false);
+  }
 
   void _showErrorDialog(String title, String message) {
     AwesomeDialog(
@@ -141,6 +172,16 @@ class _Login extends State<Login> {
                 },
               ),
               Container(height: 30),
+              CustomButtonAuth(
+                login: "LogIn With Google",
+                onPressed: () {
+                  signInWithGoogle();
+                  //عند الضغط رخ تظهر جميع الاليميلات الخاصة فيا في جوجل
+                },
+              ),
+              /*
+              //التصميم الاساسي 
+              //لكن رح نحط بداله زر تسجيل الدخول بواسطة جوجل عوضا عن الايميل والباسوورد
               const Row(
                 children: [
                   Expanded(child: Divider(color: Colors.grey)),
@@ -157,6 +198,8 @@ class _Login extends State<Login> {
                 ],
               ),
               Container(height: 15),
+
+             //-------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -238,6 +281,7 @@ class _Login extends State<Login> {
                   ),
                 ],
               ),
+              */
               Container(height: 10),
               Center(
                 child: Row(

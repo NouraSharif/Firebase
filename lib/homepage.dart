@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class Homepage extends StatelessWidget {
   @override
@@ -22,6 +23,12 @@ class Homepage extends StatelessWidget {
                   "login",
                   (route) => false,
                 );
+                //بعد تسجيل الدخول باستخدام جوجل المرات اللي بعدها ما بتظهر شاشة لاختيار الايميل
+                //لذلك بدي احذف الايميل من الذاكرة
+                //مقابل تسجيل الدخول باستخدام جوجل بنعمل تسجيل الخروج باستخدامه
+                //بنعمل instance
+                GoogleSignIn googleSignIn = GoogleSignIn();
+                googleSignIn.disconnect();
               },
             ),
           ],
