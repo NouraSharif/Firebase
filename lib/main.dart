@@ -45,7 +45,11 @@ class _MyAppState extends State<MyApp> {
       //من خلال الفايربيز بنعرف
       //لو الشخص عامل تسجيل دخول بدي احوله على الصفحة الرئيسية
       //لو مش عامل تسجيل دخول بدي احوله على صفحة تسجيل الدخول
-      home: FirebaseAuth.instance.currentUser == null ? Login() : Homepage(),
+      home:
+          (FirebaseAuth.instance.currentUser != null &&
+                  FirebaseAuth.instance.currentUser!.emailVerified)
+              ? Homepage()
+              : Login(),
       routes: {
         "register": (context) => const Register(),
         "login": (context) => const Login(),

@@ -4,9 +4,7 @@ import 'package:app22/custom/custom_button.dart';
 import 'package:app22/custom/custom_logo.dart';
 import 'package:app22/custom/custom_text.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types
@@ -111,7 +109,22 @@ class _Login extends State<Login> {
                         email: email.text.trim(),
                         password: password.text,
                       );
-                      Navigator.of(context).pushReplacementNamed("homepage");
+                      //التحقق من البريد
+                      if (FirebaseAuth.instance.currentUser?.emailVerified ==
+                          false) {
+                        FirebaseAuth.instance.currentUser
+                            ?.sendEmailVerification();
+                        AwesomeDialog(
+                          context: context,
+                          dialogType: DialogType.error,
+                          animType: AnimType.topSlide,
+                          title: "Error",
+                          desc: "Please verify your email",
+                          btnOkOnPress: () {},
+                        ).show();
+                      } else {
+                        Navigator.of(context).pushReplacementNamed("homepage");
+                      }
                     } on FirebaseAuthException catch (e) {
                       switch (e.code) {
                         case 'user-not-found':

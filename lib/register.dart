@@ -133,9 +133,15 @@ class _Register extends State<Register> {
                                 email: email.text.trim(),
                                 password: password.text,
                               );
-                          Navigator.of(
-                            context,
-                          ).pushReplacementNamed("homepage");
+                          //بعد ما ينشئ الحساب بوديني على صفحة تسجيل الدخول
+                          //ازا تحقق من الايميل بدي احوله على الصفحة الرئيسية
+                          //ازا ما تحقق بضل بصفحة الدخول بكتب البريد وكلمة السر بعدها بيظهرله ديالوق التحقق
+                          //-------------------
+                          //اول ما ينشئ الحساب بدي ابعتله رسالة تحقق من البريد لكن الاصح تكون الرسالة قبل الديالوق  في صفحة الدخول
+                          /* FirebaseAuth.instance.currentUser!
+                            .sendEmailVerification();
+                          */
+                          Navigator.of(context).pushReplacementNamed("login");
                         } on FirebaseAuthException catch (e) {
                           switch (e.code) {
                             case 'weak-password':
