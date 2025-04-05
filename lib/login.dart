@@ -121,13 +121,59 @@ class _Login extends State<Login> {
                 ],
               ),
               Container(height: 7),
-              const Text(
-                textAlign: TextAlign.right,
-                "Forget Password?",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: Colors.grey,
+              InkWell(
+                onTap: () async {
+                  //عند نسيان كلمة المرور بالضغط على هاي الكلمة رح يرسل بريد بكتابة كلمة المرور الجديدة
+                  //ومباشرة بتستخدمها مع الاليميل للدخول للرئيسية
+                  if (email.text.isEmpty) {
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      animType: AnimType.topSlide,
+                      title: "Error",
+                      desc: "Please enter your email",
+                      btnOkOnPress: () {},
+                    ).show();
+                    return;
+                  }
+                  try {
+                    //هاي الدالة ممكن يصير فيها ايرور مثلا الايميل مش موجود
+                    /*
+                        في النهاية في خلل بسيط:بانه ازا المستخدم ادخل ايميل عشوائي مش موجود بالفايربيز
+                        بينبعتله رسالة على الايميل لتغيير كلمة السر
+                        فلازم يكون الحساب موجود بالفايربيز===بتنحل عن طريق الشات جي بي تي
+                    */
+                    await FirebaseAuth.instance.sendPasswordResetEmail(
+                      email: email.text.trim(),
+                    );
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.success,
+                      animType: AnimType.topSlide,
+                      title: "Success",
+                      desc: "Check your email to reset password",
+                      btnOkOnPress: () {},
+                    ).show();
+                  } catch (e) {
+                    print(e);
+                    AwesomeDialog(
+                      context: context,
+                      dialogType: DialogType.error,
+                      animType: AnimType.topSlide,
+                      title: "Error",
+                      desc: "Failed to send reset password email",
+                      btnOkOnPress: () {},
+                    ).show();
+                  }
+                },
+                child: Text(
+                  textAlign: TextAlign.right,
+                  "Forget Password?",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
               Container(height: 10),
@@ -174,8 +220,8 @@ class _Login extends State<Login> {
               Container(height: 30),
               CustomButtonAuth(
                 login: "LogIn With Google",
-                onPressed: () {
-                  signInWithGoogle();
+                onPressed: () async {
+                  await signInWithGoogle();
                   //عند الضغط رخ تظهر جميع الاليميلات الخاصة فيا في جوجل
                 },
               ),
