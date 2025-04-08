@@ -1,7 +1,8 @@
+import 'package:app22/auth/login.dart';
+import 'package:app22/auth/register.dart';
+import 'package:app22/categories.dart/add.dart';
 import 'package:app22/firebase_options.dart';
 import 'package:app22/homepage.dart';
-import 'package:app22/login.dart';
-import 'package:app22/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,20 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.pink[200],
+          titleTextStyle: TextStyle(
+            color: Colors.blue,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: IconThemeData(color: Colors.blue),
+        ),
+      ),
+
       debugShowCheckedModeBanner: false, // إخفاء شريط الـ Debug
+      title: "My App",
       //من خلال الفايربيز بنعرف
       //لو الشخص عامل تسجيل دخول بدي احوله على الصفحة الرئيسية
       //لو مش عامل تسجيل دخول بدي احوله على صفحة تسجيل الدخول
@@ -54,6 +68,7 @@ class _MyAppState extends State<MyApp> {
         "register": (context) => const Register(),
         "login": (context) => const Login(),
         "homepage": (context) => Homepage(),
+        "addCategory": (context) => const AddCategory(),
       },
     );
   }

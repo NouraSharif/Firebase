@@ -1,7 +1,7 @@
 // ignore_for_file: file_names
-import 'package:app22/custom/custom_button.dart';
-import 'package:app22/custom/custom_logo.dart';
-import 'package:app22/custom/custom_text.dart';
+import 'package:app22/components/custom_button.dart';
+import 'package:app22/components/custom_logo.dart';
+import 'package:app22/components/custom_text.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
