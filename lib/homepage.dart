@@ -1,3 +1,4 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -95,13 +96,35 @@ class _HomepageState extends State<Homepage> {
                           crossAxisCount: 2,
                         ),
                     itemBuilder: (context, i) {
-                      return Card(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset("images/file.jpg"),
-                            Text("${data[i]['name']}"),
-                          ],
+                      return InkWell(
+                        onLongPress: () {
+                          AwesomeDialog(
+                            context: context,
+                            dialogType: DialogType.warning,
+                            animType: AnimType.rightSlide,
+                            title: 'Dialog Title',
+                            desc: 'هل انت متأكد من حذف القسم',
+                            btnCancelOnPress: () {},
+                            btnOkOnPress: () async {
+                              await FirebaseFirestore.instance
+                                  .collection("categories")
+                                  .doc(data[i].id)
+                                  .delete();
+                              //بعد تنفيذ عملية الحذف لازم ارجع اوجه المستخدم لنفس الصفحة لحتى تنعمللها عملية ريفرش
+                              Navigator.of(
+                                context,
+                              ).pushReplacementNamed("homepage");
+                            },
+                          ).show();
+                        },
+                        child: Card(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset("images/file.jpg"),
+                              Text("${data[i]['name']}"),
+                            ],
+                          ),
                         ),
                       );
                     },
