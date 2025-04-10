@@ -149,7 +149,7 @@ class _Login extends State<Login> {
                         في النهاية في خلل بسيط:بانه ازا المستخدم ادخل ايميل عشوائي مش موجود بالفايربيز
                         بينبعتله رسالة على الايميل لتغيير كلمة السر
                         فلازم يكون الحساب موجود بالفايربيز===بتنحل عن طريق الشات جي بي تي
-                    */
+                            */
                             await FirebaseAuth.instance.sendPasswordResetEmail(
                               email: email.text.trim(),
                             );
@@ -222,6 +222,11 @@ class _Login extends State<Login> {
                                 ).pushReplacementNamed("homepage");
                               }
                             } on FirebaseAuthException catch (e) {
+                              //في حالة الايرور  بيظهر الديالوق ولكن عند عمل اوك تبقة الصفحة في حالة التحميل
+                              //لانه التحميل ما زال شغال في حالة جلب الداتا ولكن حصل كاتش معين ولم ينتهي التحميل
+                              //فعند حدوث الخطا لابد من اغلاق التحميل
+                              isLoading = false;
+                              setState(() {});
                               switch (e.code) {
                                 case 'user-not-found':
                                   _showErrorDialog("Error", "User not found");

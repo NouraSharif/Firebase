@@ -2,6 +2,7 @@ import 'package:app22/components/custom_button.dart';
 import 'package:app22/components/customtextfieldadd.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AddCategory extends StatefulWidget {
@@ -19,10 +20,15 @@ class _AddCategoryState extends State<AddCategory> {
     'categories',
   );
 
-  Future<void> addCategory() {
+  Future<void> addCategory() async {
     // Call the Category's CollectionReference to add a new Category
     return categories
-        .add({"name": name.text})
+        .add({
+          "name": name.text,
+          //في درس التفكير المنطقي لابد من اضافة المعرف الخاص باليوزر مع اضافة كل قسم لمعرفة الاقسام الخاصة بكل يوزر
+          //لحتى نعرف كل قسم لأي يوزر==where.. في صفحةHomepage
+          "id": await FirebaseAuth.instance.currentUser!.uid,
+        })
         .then((value) => print("Category Added: ${name.text}"))
         .catchError((error) => print("Failed to add category: $error"));
   }

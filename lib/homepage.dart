@@ -22,8 +22,16 @@ class _HomepageState extends State<Homepage> {
   bool isLoading = true;
 
   getdata() async {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection("categories").get();
+    QuerySnapshot
+    querySnapshot =
+        //لحتى نعرف كل قسم لأي يوزر==where.. في صفحةHomepage
+        //بنحدد اسم الحق==id
+        //وبكتب انه يجيبلي فقط الاقسام الخاصة باليوزر
+        //where==اعطيني جميع الدوك الخاصة بهذا الكولكشن اللي بكون فيها الحقل اي دي يساوي الاي دي كزا..
+        await FirebaseFirestore.instance
+            .collection("categories")
+            .where("id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+            .get();
     data.addAll(querySnapshot.docs);
     //عشان نعمل تحديث للصفحة بعد ما نجيب الداتا
     //لانه رح تتغير قيمة الداتا
