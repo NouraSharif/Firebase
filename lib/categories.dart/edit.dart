@@ -2,17 +2,19 @@ import 'package:app22/components/custom_button.dart';
 import 'package:app22/components/customtextfieldadd.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
+class EditCategory extends StatefulWidget {
+  final String docid;
+  final String oldname;
+
+  const EditCategory({super.key, required this.docid, required this.oldname});
 
   @override
-  State<AddCategory> createState() => _AddCategoryState();
+  State<EditCategory> createState() => _EditCategoryState();
 }
 
-class _AddCategoryState extends State<AddCategory> {
+class _EditCategoryState extends State<EditCategory> {
   TextEditingController name = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -21,23 +23,24 @@ class _AddCategoryState extends State<AddCategory> {
   );
 
   bool isLoading = false;
-  Future<void> addCategory() async {
-    // Call the Category's CollectionReference to add a new Category
-    return categories
-        .add({
-          "name": name.text,
-          //في درس التفكير المنطقي لابد من اضافة المعرف الخاص باليوزر مع اضافة كل قسم لمعرفة الاقسام الخاصة بكل يوزر
-          //لحتى نعرف كل قسم لأي يوزر==where.. في صفحةHomepage
-          "id": await FirebaseAuth.instance.currentUser!.uid,
-        })
-        .then((value) => print("Category Added: ${name.text}"))
-        .catchError((error) => print("Failed to add category: $error"));
+
+  editCategory() async {
+    //رح نضيف الايدي الخاص بالدوك اللي رح نقوم بتعديله
+    //بنطالب المستخدم يقوم بادخاله
+    //وايضا لازم نمرر للمستخدم الاسم القديم
+    await categories.doc(widget.docid).update({'name': name.text});
+  }
+
+  @override
+  void initState() {
+    name.text = widget.oldname;
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('AddCategory')),
+      appBar: AppBar(title: const Text('EditCategory')),
       body: Form(
         key: formKey,
         child:
@@ -68,7 +71,7 @@ class _AddCategoryState extends State<AddCategory> {
                     Container(
                       width: 100,
                       child: CustomButtonAuth(
-                        login: "Add",
+                        login: "Save",
                         onPressed: () {
                           //لحتى ما نرسل داتا فارغة للـ firebase بنتحقق من الحقل
                           if (formKey.currentState!.validate()) {
@@ -76,7 +79,7 @@ class _AddCategoryState extends State<AddCategory> {
                             try {
                               isLoading = true;
                               setState(() {});
-                              addCategory();
+                              editCategory();
                               //بعد اضافة القسم رح ننقل المستخدم على صفحة الاقسام==homepage
                               //isLoading = false; بدونها لانه مباشرة رح ينقلني على الصفحة
                               //لكن لو حدث خطا هنا رح تبقى القيمة ترو وما رح ينقلني على الصفحة

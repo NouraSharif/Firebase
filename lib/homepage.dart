@@ -1,3 +1,4 @@
+import 'package:app22/categories.dart/edit.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,7 +28,7 @@ class _HomepageState extends State<Homepage> {
         //لحتى نعرف كل قسم لأي يوزر==where.. في صفحةHomepage
         //بنحدد اسم الحق==id
         //وبكتب انه يجيبلي فقط الاقسام الخاصة باليوزر
-        //where==اعطيني جميع الدوك الخاصة بهذا الكولكشن اللي بكون فيها الحقل اي دي يساوي الاي دي كزا..
+        //where==اعطيني جميع الدوك الخاصة بهذا الكولكشن اللي بكون فيها الحقل اي دي يساوي الاي دي كزا اللي برجعلي من اليوزر اللي مسجل دخوله.
         await FirebaseFirestore.instance
             .collection("categories")
             .where("id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
@@ -111,9 +112,11 @@ class _HomepageState extends State<Homepage> {
                             dialogType: DialogType.warning,
                             animType: AnimType.rightSlide,
                             title: 'Dialog Title',
-                            desc: 'هل انت متأكد من حذف القسم',
-                            btnCancelOnPress: () {},
-                            btnOkOnPress: () async {
+                            desc: 'اختر ماذا تريد ان تفعل',
+
+                            btnOkText: "تعديل",
+                            btnCancelText: "حذف",
+                            btnCancelOnPress: () async {
                               await FirebaseFirestore.instance
                                   .collection("categories")
                                   .doc(data[i].id)
@@ -122,6 +125,18 @@ class _HomepageState extends State<Homepage> {
                               Navigator.of(
                                 context,
                               ).pushReplacementNamed("homepage");
+                            },
+                            btnOkOnPress: () {
+                              //بعد ما اضغط على تعديل رح ينقلني على صفحة التعديل
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => EditCategory(
+                                        docid: data[i].id,
+                                        oldname: data[i]['name'],
+                                      ),
+                                ),
+                              );
                             },
                           ).show();
                         },
