@@ -28,13 +28,25 @@ class _EditCategoryState extends State<EditCategory> {
     //رح نضيف الايدي الخاص بالدوك اللي رح نقوم بتعديله
     //بنطالب المستخدم يقوم بادخاله
     //وايضا لازم نمرر للمستخدم الاسم القديم
-    await categories.doc(widget.docid).update({'name': name.text});
+    await categories.doc(widget.docid).set({
+      'name': name.text,
+      // 'id': FirebaseAuth.instance.currentUser!.uid,
+    }, SetOptions(merge: true));
+    //set == update في حال كان الدوك موجود
+    //set == add في حال كان الدوك غير موجود
   }
 
   @override
   void initState() {
     name.text = widget.oldname;
     super.initState();
+  }
+
+  //texteditingcontroller==في اي مكان موجود لازم نعمل dispose الها
+  @override
+  void dispose() {
+    name.dispose();
+    super.dispose();
   }
 
   @override
