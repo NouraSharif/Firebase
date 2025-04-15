@@ -1,4 +1,5 @@
 import 'package:app22/categories.dart/edit.dart';
+import 'package:app22/note/view.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -106,6 +107,14 @@ class _HomepageState extends State<Homepage> {
                         ),
                     itemBuilder: (context, i) {
                       return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => NoteView(categoryid: data[i].id),
+                            ),
+                          );
+                        },
                         onLongPress: () {
                           AwesomeDialog(
                             context: context,

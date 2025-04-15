@@ -35,6 +35,12 @@ class _AddCategoryState extends State<AddCategory> {
   }
 
   @override
+  void dispose() {
+    name.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('AddCategory')),
