@@ -1,6 +1,7 @@
 import 'package:app22/auth/login.dart';
 import 'package:app22/auth/register.dart';
 import 'package:app22/categories.dart/add.dart';
+import 'package:app22/filter.dart' show FilterFirestore;
 import 'package:app22/firebase_options.dart';
 import 'package:app22/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -59,7 +60,7 @@ class _MyAppState extends State<MyApp> {
       //من خلال الفايربيز بنعرف
       //لو الشخص عامل تسجيل دخول بدي احوله على الصفحة الرئيسية
       //لو مش عامل تسجيل دخول بدي احوله على صفحة تسجيل الدخول
-      home: //FilterFirestore==واجهة عملناها لحتى نطبق مفهوم الفلتر
+      home: //FilterFirestore(), //==واجهة عملناها لحتى نطبق مفهوم الفلتر
           (FirebaseAuth.instance.currentUser != null &&
                   FirebaseAuth.instance.currentUser!.emailVerified)
               ? Homepage()
@@ -69,6 +70,7 @@ class _MyAppState extends State<MyApp> {
         "login": (context) => const Login(),
         "homepage": (context) => Homepage(),
         "addCategory": (context) => const AddCategory(),
+        "filterfirestore": (context) => const FilterFirestore(),
       },
     );
   }
