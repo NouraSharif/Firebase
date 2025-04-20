@@ -57,6 +57,24 @@ class _FilterFirestoreState extends State<FilterFirestore> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('FilterFirestore')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          FirebaseFirestore.instance.collection('users');
+          DocumentReference doc1 = FirebaseFirestore.instance
+              .collection('users')
+              .doc('1');
+          DocumentReference doc2 = FirebaseFirestore.instance
+              .collection('users')
+              .doc('2');
+
+          WriteBatch batch = FirebaseFirestore.instance.batch();
+          batch.set(doc1, {'username': 'ahmad', 'age': 34, 'money': 10000});
+          batch.set(doc2, {'username': 'NoNo', 'age': 26, 'money': 600000});
+          batch.delete(doc1);
+          batch.update(doc2, {'money': 1000});
+          batch.commit();
+        },
+      ),
       body: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, i) {
