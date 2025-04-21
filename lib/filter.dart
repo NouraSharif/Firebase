@@ -9,8 +9,11 @@ class FilterFirestore extends StatefulWidget {
 }
 
 class _FilterFirestoreState extends State<FilterFirestore> {
-  List<QueryDocumentSnapshot> data = [];
+  //RealTime Database
+  final Stream<QuerySnapshot> usersStream =
+      FirebaseFirestore.instance.collection('users').snapshots();
 
+  /*List<QueryDocumentSnapshot> data = [];
   initialData() async {
     CollectionReference users = FirebaseFirestore.instance.collection('users');
     QuerySnapshot userdata =
@@ -46,11 +49,11 @@ class _FilterFirestoreState extends State<FilterFirestore> {
     });
     setState(() {});
   }
-
+*/
   @override
   void initState() {
     super.initState();
-    initialData();
+    //initialData();
   }
 
   @override
@@ -74,18 +77,34 @@ class _FilterFirestoreState extends State<FilterFirestore> {
           batch.update(doc2, {'money': 1000});
           batch.commit();
         },
+        backgroundColor: Colors.pink[200],
+        child: Icon(Icons.add, color: Colors.blue),
       ),
-      body: ListView.builder(
-        itemCount: data.length,
-        itemBuilder: (context, i) {
-          return InkWell(
-            onTap: () {
-              DocumentReference documentReference = FirebaseFirestore.instance
-                  .collection('users')
-                  .doc(data[i].id);
+      body: StreamBuilder(
+        stream: usersStream,
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error'));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No Data'));
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () {
+                  DocumentReference documentReference = FirebaseFirestore
+                      .instance
+                      .collection('users')
+                      .doc(snapshot.data!.docs[index].id);
 
-              FirebaseFirestore.instance
-                  .runTransaction((transaction) async {
+                  FirebaseFirestore.instance.runTransaction((
+                    transaction,
+                  ) async {
                     DocumentSnapshot snapshot = await transaction.get(
                       documentReference,
                     );
@@ -97,28 +116,29 @@ class _FilterFirestoreState extends State<FilterFirestore> {
                         transaction.update(documentReference, {'money': money});
                       }
                     }
-                  })
-                  .then((value) {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      "filterfirestore",
-                      (route) => false,
-                    );
                   });
+                },
+                child: Card(
+                  child: ListTile(
+                    title: Text(
+                      snapshot.data!.docs[index]['username'],
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text("age :${snapshot.data!.docs[index]['age']}"),
+                    trailing: Text(
+                      "${snapshot.data!.docs[index]['money']}\$",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              );
             },
-
-            child: Card(
-              child: ListTile(
-                trailing: Text(
-                  "${data[i]['money']}\$",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                title: Text(
-                  data[i]['username'],
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                subtitle: Text("${data[i]['age']}"),
-              ),
-            ),
           );
         },
       ),
