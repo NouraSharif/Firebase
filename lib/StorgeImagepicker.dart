@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 
 class ImagePickerWidget extends StatefulWidget {
   const ImagePickerWidget({super.key});
@@ -12,6 +14,7 @@ class ImagePickerWidget extends StatefulWidget {
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   File? file;
+  String? url;
 
   getFile() async {
     final ImagePicker picker = ImagePicker();
@@ -27,6 +30,14 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     //لحتى تكون الامور تمام بنضيف هذا الشرط
     if (imagegallery != null) {
       file = File(imagegallery.path);
+
+      //cloud Storge ==خدمة تخزين سحابي==ليس مجانية على الفايربيز
+      //اول اشي بنجيب اسم الصورة بعدها المكان اللي رح نخزن فيه الصورة لى الستورج بعدها بنرفع الصورة
+      //بعدها بنجيب الرابط الخاص بالصورة لحتى نعرضها باليوزر انترفيس اسفل الكود
+      var imagename = basename(imagegallery.path);
+      var refstorge = FirebaseStorage.instance.ref(imagename);
+      await refstorge.putFile(file!);
+      url = await refstorge.getDownloadURL();
     }
     setState(() {});
   }
@@ -45,7 +56,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             },
             child: Text("Pick Image"),
           ),
-          if (file != null) Image.file(file!),
+          if (url != null)
+            //استخدمنا النت ورك لانه الصورة موجودة على الاستضافة الخاصة بالفايربيز على الانترنت
+            Image.network(url!),
         ],
       ),
     );
