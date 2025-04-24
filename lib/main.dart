@@ -1,3 +1,4 @@
+import 'package:app22/StorgeImagepicker.dart';
 import 'package:app22/auth/login.dart';
 import 'package:app22/auth/register.dart';
 import 'package:app22/categories.dart/add.dart';
@@ -60,11 +61,13 @@ class _MyAppState extends State<MyApp> {
       //من خلال الفايربيز بنعرف
       //لو الشخص عامل تسجيل دخول بدي احوله على الصفحة الرئيسية
       //لو مش عامل تسجيل دخول بدي احوله على صفحة تسجيل الدخول
-      home: //FilterFirestore(), //==واجهة عملناها لحتى نطبق مفهوم الفلتر
+      home: ImagePickerWidget(),
+      /*
+      //FilterFirestore(), //==واجهة عملناها لحتى نطبق مفهوم الفلتر
           (FirebaseAuth.instance.currentUser != null &&
                   FirebaseAuth.instance.currentUser!.emailVerified)
               ? Homepage()
-              : Login(),
+              : Login(),*/
       routes: {
         "register": (context) => const Register(),
         "login": (context) => const Login(),
