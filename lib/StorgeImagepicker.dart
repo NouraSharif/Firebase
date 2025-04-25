@@ -35,7 +35,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
       //اول اشي بنجيب اسم الصورة بعدها المكان اللي رح نخزن فيه الصورة لى الستورج بعدها بنرفع الصورة
       //بعدها بنجيب الرابط الخاص بالصورة لحتى نعرضها باليوزر انترفيس اسفل الكود
       var imagename = basename(imagegallery.path);
-      var refstorge = FirebaseStorage.instance.ref(imagename);
+      //لاضافة الصورة داخل المجلد
+      //ref("اسم المجلد").child(imagename);
+      //او==ref("اسم المجلد/اسم الصورة");
+      var refstorge = FirebaseStorage.instance.ref("images$imagename");
       await refstorge.putFile(file!);
       url = await refstorge.getDownloadURL();
     }

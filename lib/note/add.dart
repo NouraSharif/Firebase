@@ -1,9 +1,13 @@
+import 'dart:io';
 import 'package:app22/components/custom_button.dart';
 import 'package:app22/components/customtextfieldadd.dart';
 import 'package:app22/note/view.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
 
 class AddNote extends StatefulWidget {
   final String docid;
@@ -16,6 +20,10 @@ class AddNote extends StatefulWidget {
 class _AddNoteState extends State<AddNote> {
   TextEditingController note = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  //لتحميل الصورة مع الملاحظة
+  File? file;
+  String? url;
 
   bool isLoading = false;
   AddNote() async {
@@ -31,12 +39,15 @@ class _AddNoteState extends State<AddNote> {
         setState(() {});
         await Collectionnote.add({
           "note": note.text,
-
+          //بدنا نضيف عنوان الصورة  اللي بدنا نحملها
+          //في حال كان مش موجود رح نضيف none
+          //من خلال الurl بقدر اعرض الصورة بالنهاية==view.dart
+          "image": url ?? 'none',
           //في درس التفكير المنطقي لابد من اضافة المعرف الخاص باليوزر مع اضافة كل قسم لمعرفة الاقسام الخاصة بكل يوزر
           //لحتى نعرف كل قسم لأي يوزر==where.. في صفحةHomepage
         });
         Navigator.push(
-          context,
+          this.context,
           MaterialPageRoute(
             builder: (context) => NoteView(categoryid: widget.docid),
           ),
@@ -47,7 +58,8 @@ class _AddNoteState extends State<AddNote> {
         isLoading = false;
         setState(() {});
         AwesomeDialog(
-          context: context,
+          // ignore: use_build_context_synchronously
+          context: this.context,
           dialogType: DialogType.error,
           animType: AnimType.topSlide,
           title: 'Error',
@@ -56,6 +68,37 @@ class _AddNoteState extends State<AddNote> {
         ).show();
       }
     }
+  }
+
+  //لتحميل الصورة مع الملاحظة
+
+  getFile() async {
+    final ImagePicker picker = ImagePicker();
+    // Pick an image.
+    final XFile? imagegallery = await picker.pickImage(
+      source: ImageSource.gallery,
+    );
+    // Capture a photo.
+    /*final XFile? imageCamera = await picker.pickImage(
+      source: ImageSource.camera,
+    );*/
+    //حتى لو ما اخترنا الصورة عند الضغط ع الزر
+    //لحتى تكون الامور تمام بنضيف هذا الشرط
+    if (imagegallery != null) {
+      file = File(imagegallery.path);
+
+      //cloud Storge ==خدمة تخزين سحابي==ليس مجانية على الفايربيز
+      //اول اشي بنجيب اسم الصورة بعدها المكان اللي رح نخزن فيه الصورة لى الستورج بعدها بنرفع الصورة
+      //بعدها بنجيب الرابط الخاص بالصورة لحتى نعرضها باليوزر انترفيس اسفل الكود
+      var imagename = basename(imagegallery.path);
+      //لاضافة الصورة داخل المجلد
+      //ref("اسم المجلد").child(imagename);
+      //او==ref("اسم المجلد/اسم الصورة");
+      var refstorge = FirebaseStorage.instance.ref("images$imagename");
+      await refstorge.putFile(file!);
+      url = await refstorge.getDownloadURL();
+    }
+    setState(() {});
   }
 
   @override
@@ -84,7 +127,7 @@ class _AddNoteState extends State<AddNote> {
                       ),
                       width: double.infinity,
                       child: CustomTextFormAdd(
-                        label: "category name:",
+                        label: "note detailes:",
                         hintText: "Enter Your Note",
                         controller: note,
                         validator: (val) {
@@ -95,6 +138,15 @@ class _AddNoteState extends State<AddNote> {
                         },
                       ),
                     ),
+                    SizedBox(height: 20),
+                    CustomButtonUpload(
+                      login: 'Loading Images',
+                      onPressed: () {
+                        getFile();
+                      },
+                      isSelected: url != null ? true : false,
+                    ),
+                    Container(height: 10),
                     Container(
                       width: 100,
                       child: CustomButtonAuth(

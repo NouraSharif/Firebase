@@ -3,6 +3,7 @@ import 'package:app22/note/edit.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -124,6 +125,15 @@ class _NoteViewState extends State<NoteView> {
                                 .collection("note")
                                 .doc(data[i].id)
                                 .delete();
+
+                            //اذا كان مع الملاحظة مرفق صورة او ملف لا بد انه نحذفه معها
+                            //لخفض التكلفة مثلا
+                            //وبنفس الوقت لازم نتاكد ازا الملاحظة مرفق معها ملف ولا لا لحتى ما يصير عنا خطا
+                            if (data[i]['url'] != 'none') {
+                              FirebaseStorage.instance
+                                  .refFromURL(data[i]['url'])
+                                  .delete();
+                            }
                             setState(() {
                               data.removeAt(i);
                             });
@@ -147,7 +157,21 @@ class _NoteViewState extends State<NoteView> {
                         child: ListView(
                           padding: EdgeInsets.all(15),
                           children: [
-                            Expanded(child: Text("${data[i]['note']}")),
+                            Expanded(
+                              child: Column(
+                                children: [
+                                  Text("${data[i]['note']}"),
+                                  SizedBox(height: 10),
+                                  // اذا المستخدم حمل صورة مع الملاحظة رح نحملها
+                                  if (data[i]['image'] != "none")
+                                    Image.network(
+                                      "${data[i]['image']}",
+                                      height: 80,
+                                      fit: BoxFit.cover,
+                                    ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
