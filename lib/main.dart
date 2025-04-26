@@ -1,6 +1,7 @@
 import 'package:app22/auth/login.dart';
 import 'package:app22/auth/register.dart';
 import 'package:app22/categories.dart/add.dart';
+import 'package:app22/cloudMessaging.dart';
 import 'package:app22/filter.dart' show FilterFirestore;
 import 'package:app22/firebase_options.dart';
 import 'package:app22/homepage.dart';
@@ -60,12 +61,13 @@ class _MyAppState extends State<MyApp> {
       //من خلال الفايربيز بنعرف
       //لو الشخص عامل تسجيل دخول بدي احوله على الصفحة الرئيسية
       //لو مش عامل تسجيل دخول بدي احوله على صفحة تسجيل الدخول
-      home: // ImagePickerWidget(),
-          //FilterFirestore(), //==واجهة عملناها لحتى نطبق مفهوم الفلتر
-          (FirebaseAuth.instance.currentUser != null &&
+      home: TestState(),
+      // ImagePickerWidget(),
+      //FilterFirestore(), //==واجهة عملناها لحتى نطبق مفهوم الفلتر
+      /*  (FirebaseAuth.instance.currentUser != null &&
                   FirebaseAuth.instance.currentUser!.emailVerified)
               ? Homepage()
-              : Login(),
+              : Login(),*/
       routes: {
         "register": (context) => const Register(),
         "login": (context) => const Login(),
