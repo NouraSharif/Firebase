@@ -1,14 +1,16 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-class TestState extends StatefulWidget {
-  const TestState({super.key});
+class CloudMessaging extends StatefulWidget {
+  const CloudMessaging({super.key});
 
   @override
-  State<TestState> createState() => _TestStateState();
+  State<CloudMessaging> createState() => _CloudMessagingState();
 }
 
-class _TestStateState extends State<TestState> {
+class _CloudMessagingState extends State<CloudMessaging> {
   //لاني بشتغل على محاكي كروم ما بيقبل يطبعلي التوكن لازم اشتغل على محاكي اندرويد
   //او جهاز حقيقي
   getToken() async {
@@ -55,8 +57,48 @@ class _TestStateState extends State<TestState> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('TestState')),
-      body: const Center(child: Text('Welcome to TestState')),
+      appBar: AppBar(title: const Text('CloudMessaging')),
+      body: Center(
+        child: MaterialButton(
+          onPressed: () {
+            sendMessage(
+              "New",
+              "Hello Ahmed! Now we have a new Car,Can look it in this video,Thanks!",
+            );
+          },
+          child: const Text("Send Notification"),
+        ),
+      ),
     );
+  }
+}
+
+//كود ارسال الاشعار من الAPI بلغة Dart
+sendMessage(title, message) async {
+  var headersList = {
+    'Accept': '*/*',
+
+    'Content-Type': 'application/json',
+    'Authorization': 'key=',
+  };
+  var url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+
+  var body = {
+    "to": "<Device FCM token>",
+    "notification": {"title": title, "body": message},
+  };
+
+  var http;
+  var req = http.Request('GET', url);
+  req.headers.addAll(headersList);
+  req.body = json.encode(body);
+
+  var res = await req.send();
+  final resBody = await res.stream.bytesToString();
+
+  if (res.statusCode >= 200 && res.statusCode < 300) {
+    print(resBody);
+  } else {
+    print(res.reasonPhrase);
   }
 }

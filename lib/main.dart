@@ -61,7 +61,7 @@ class _MyAppState extends State<MyApp> {
       //من خلال الفايربيز بنعرف
       //لو الشخص عامل تسجيل دخول بدي احوله على الصفحة الرئيسية
       //لو مش عامل تسجيل دخول بدي احوله على صفحة تسجيل الدخول
-      home: TestState(),
+      home: CloudMessaging(),
       // ImagePickerWidget(),
       //FilterFirestore(), //==واجهة عملناها لحتى نطبق مفهوم الفلتر
       /*  (FirebaseAuth.instance.currentUser != null &&
