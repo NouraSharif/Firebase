@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
@@ -49,6 +50,32 @@ class _CloudMessagingState extends State<CloudMessaging> {
 
   @override
   void initState() {
+    //دالة مسؤولة عن ظهور الاشعار للمستخدم والتطبيق مفتوح
+    FirebaseMessaging.onMessage.listen((RemoteMessage Message) {
+      if (Message.notification != null) {
+        print("==============================");
+        print(Message.notification!.title);
+        print(Message.notification!.body);
+        print("==============================");
+
+        AwesomeDialog(
+          context: context,
+          title: Message.notification!.title,
+          body: Text("${Message.notification!.body}"),
+          dialogType: DialogType.info,
+        ).show();
+      }
+      //او ممكن نضيف==snakbar==> الاشعار يظهر بالاسفل ...
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("${Message.notification!.body}")));
+    });
+    /*
+      بهذا لاشكل اول ما اضغط على الزر الخاص بارسال الاشعار بكود الاشعار من الاي بي اي...الخ
+      بوجود هاي الدالة رح يصل الاشعار والمستخدم فاتح التطبيق  والا بظهر لما يكون التطبيق بالخلفية  
+      //هاي الدالة رح يتم استدعائها عند ارسال اي اشعار لانها ليسن ====ستريم
+      
+      */
     //  myRequestPermission();
     getToken();
     super.initState();
