@@ -7,9 +7,29 @@ import 'package:app22/firebase_options.dart';
 import 'package:app22/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("============================Background Message");
+  print(message.notification!.title);
+  print(message.notification!.body);
+  print("============================Terminated Message");
+
+  //لتجربة هاي لادالة
+  /*
+   رح نرسل الاشعار عن طريث==Thunder Kline
+   لانه التطبيق لازم يكون مغلق او بالخلفية
+
+   //في هاي الحالة بنلاحظ انه ما بتشتغل عندي دال==onMessage
+  */
+
+  //لازم تكون هاي الدالة بالمين لانه شرطها==top-level function
+}
+
 void main() async {
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
