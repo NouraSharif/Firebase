@@ -56,6 +56,7 @@ class _CloudMessagingState extends State<CloudMessaging> {
         print("==============================");
         print(Message.notification!.title);
         print(Message.notification!.body);
+        print(Message.data);
         print("==============================");
 
         AwesomeDialog(
@@ -113,6 +114,7 @@ sendMessage(title, message) async {
   var body = {
     "to": "<Device FCM token>",
     "notification": {"title": title, "body": message},
+    "data": {"name": "Noura Hassanin", "age": 23, "IP": 20203087},
   };
 
   var http;
