@@ -14,6 +14,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("============================Background Message");
   print(message.notification!.title);
   print(message.notification!.body);
+  print(message.data); //notification custom data
   print("============================Terminated Message");
 
   //لتجربة هاي لادالة

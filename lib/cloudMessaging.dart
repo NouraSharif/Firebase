@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app22/chat.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +51,16 @@ class _CloudMessagingState extends State<CloudMessaging> {
 
   @override
   void initState() {
+    //دالة خاصة بالضغط على الاشعار فالخلفية
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      if (message.data["type"] == "chat") {
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (context) => Chat()));
+        //في حال الضغط ع الاشعار وما كان نفس التايب رح يوجهني للصفحة الرئيسية
+      }
+    });
+
     //دالة مسؤولة عن ظهور الاشعار للمستخدم والتطبيق مفتوح
     FirebaseMessaging.onMessage.listen((RemoteMessage Message) {
       if (Message.notification != null) {
@@ -114,7 +125,12 @@ sendMessage(title, message) async {
   var body = {
     "to": "<Device FCM token>",
     "notification": {"title": title, "body": message},
-    "data": {"name": "Noura Hassanin", "age": 23, "IP": 20203087},
+    "data": {
+      "name": "Noura Hassanin",
+      "age": 23,
+      "IP": 20203087,
+      "type": "chat",
+    },
   };
 
   var http;
