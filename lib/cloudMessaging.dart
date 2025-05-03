@@ -49,16 +49,41 @@ class _CloudMessagingState extends State<CloudMessaging> {
     }
   }
 
+  //دالة بتشتغل عند الضغط على الاشعار في حال التطبيق كان مغلق
+  getInit() async {
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      //عشان ما يصير عندي ايرور لو عملنا رن للتطبيق في حال كان مفتوح
+      //لانه قيمة المتغير بتكون لا تساوي نل وهي بتشتغل والتطبيق مغلق
+      //بالنهاية بنتاكد انه هاي الدالة ما بتشتغل الا في حالة التطبيق كان مغلق
+      String? title =
+          initialMessage
+              .notification!
+              .title; //بما انه المتغير من نوع كزا ازن برجعلي كل معلومات الاشعار  فبدنا نستفيد منها
+      String? body = initialMessage.notification!.body;
+      if (initialMessage.data["type"] == "chat") {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => Chat(body: body!, title: title!),
+          ),
+        );
+        //في حال الضغط ع الاشعار وما كان نفس التايب رح يوجهني للصفحة الرئيسية
+      }
+    }
+  }
+
   @override
   void initState() {
+    getInit();
     //دالة خاصة بالضغط على الاشعار فالخلفية
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      if (message.data["type"] == "chat") {
+      /*  if (message.data["type"] == "chat") {
         Navigator.of(
           context,
         ).push(MaterialPageRoute(builder: (context) => Chat()));
         //في حال الضغط ع الاشعار وما كان نفس التايب رح يوجهني للصفحة الرئيسية
-      }
+      }*/
     });
 
     //دالة مسؤولة عن ظهور الاشعار للمستخدم والتطبيق مفتوح
