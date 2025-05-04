@@ -15,12 +15,12 @@ class CloudMessaging extends StatefulWidget {
 class _CloudMessagingState extends State<CloudMessaging> {
   //لاني بشتغل على محاكي كروم ما بيقبل يطبعلي التوكن لازم اشتغل على محاكي اندرويد
   //او جهاز حقيقي
-  getToken() async {
+  /*  getToken() async {
     String? tokenname = await FirebaseMessaging.instance.getToken();
     print(
       "==================================================Token: $tokenname",
     );
-  }
+  }*/
 
   /*
   في الويب ➔ المتصفح مسؤول عن طلب الإذن.
@@ -114,7 +114,7 @@ class _CloudMessagingState extends State<CloudMessaging> {
       
       */
     //  myRequestPermission();
-    getToken();
+    // getToken();
     super.initState();
   }
 
@@ -122,16 +122,51 @@ class _CloudMessagingState extends State<CloudMessaging> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('CloudMessaging')),
-      body: Center(
-        child: MaterialButton(
-          onPressed: () {
-            sendMessage(
-              "New",
-              "Hello Ahmed! Now we have a new Car,Can look it in this video,Thanks!",
-            );
-          },
-          child: const Text("Send Notification"),
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+
+        children: [
+          Center(
+            child: MaterialButton(
+              color: Colors.blue,
+              textColor: Colors.white,
+              onPressed: () {
+                //رح يكون مهمة هذا الزر الاشتراك بالتوبك
+                // subscribe to topic on each app start-up
+                FirebaseMessaging.instance.subscribeToTopic('waelabohamza');
+              },
+              child: const Text("Subscribe"),
+            ),
+          ),
+          Container(height: 10),
+          MaterialButton(
+            color: Colors.blue,
+            textColor: Colors.white,
+            onPressed: () {
+              //الزر هذا وظيفته الغاء الاشتراك بالتوبك كزا
+              FirebaseMessaging.instance.unsubscribeFromTopic('waelabohamza');
+            },
+            child: const Text("Unsubscribe"),
+          ),
+          Container(height: 10),
+          MaterialButton(
+            color: Colors.blue,
+            textColor: Colors.white,
+            onPressed: () {
+              //هذا الزر خاص بارسال الرسالة من التوبك
+              sendMessageTopic(
+                "Hi",
+                "فيديو بعنوان الكرة الارضية مسطحة!",
+                "waelabohamza", //لازم يكون نفس اسم التوبك بالاعلى اي خطا ما رح ينبعت الاشعار
+              );
+            },
+            child: const Text("Send Message Topics"),
+            /*
+              اول ما اضغط ع هذا الزر الاشعار بصلني
+              على شكل سناك بار...الخ
+            */
+          ),
+        ],
       ),
     );
   }
@@ -149,6 +184,42 @@ sendMessage(title, message) async {
 
   var body = {
     "to": "<Device FCM token>",
+    "notification": {"title": title, "body": message},
+    "data": {
+      "name": "Noura Hassanin",
+      "age": 23,
+      "IP": 20203087,
+      "type": "chat",
+    },
+  };
+
+  var http;
+  var req = http.Request('GET', url);
+  req.headers.addAll(headersList);
+  req.body = json.encode(body);
+
+  var res = await req.send();
+  final resBody = await res.stream.bytesToString();
+
+  if (res.statusCode >= 200 && res.statusCode < 300) {
+    print(resBody);
+  } else {
+    print(res.reasonPhrase);
+  }
+}
+
+//دالة خاصة بارسال الاشعار للتوبك
+sendMessageTopic(title, message, topic) async {
+  var headersList = {
+    'Accept': '*/*',
+
+    'Content-Type': 'application/json',
+    'Authorization': 'key=',
+  };
+  var url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+
+  var body = {
+    "to": "/topics/$topic",
     "notification": {"title": title, "body": message},
     "data": {
       "name": "Noura Hassanin",
